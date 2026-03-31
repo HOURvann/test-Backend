@@ -38,16 +38,20 @@ let posts = [
 app.get('/api/v1/posts', (req, res) => {
     res.json(posts)
 })
-
-// POST create
+// POST create new post
 app.post('/api/v1/posts', (req, res) => {
+    const { title, content, author, imageUrl, createdAt } = req.body;
     const newPost = {
         id: posts.length + 1,
-        title: req.body.title
-    }
-    posts.push(newPost)
-    res.json(newPost)
-})
+        title,
+        content,
+        author,
+        imageUrl,
+        createdAt
+    };
+    posts.push(newPost);
+    res.json(newPost);
+});
 
 // PUT update
 app.put('/api/v1/posts/:id', (req, res) => {
