@@ -1,23 +1,42 @@
 const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-require('dotenv').config();
+const dotenv = require('dotenv');
+const cors = require('cors'); // សំខាន់ណាស់ សម្រាប់ឱ្យ Frontend ភ្ជាប់មកបាន
+const connectDB = require('./config/db');
 
+// ១. Import Routes
+const userRoutes = require('./routes/userRoutes');
+const productRoutes = require('./routes/productRoutes');
+const orderRoutes = require('./routes/orderRoutes');
+
+// កំណត់ការប្រើប្រាស់ dotenv
+dotenv.config();
+
+// ២. ភ្ជាប់ទៅកាន់ MongoDB
+connectDB();
+
+const path = require('path');
 const app = express();
 
-// Middleware
-app.use(express.json());
-app.use(cors());
+// ៣. Middleware
+app.use(cors()); // អនុញ្ញាតឱ្យ Vue Frontend ហៅ API បាន
+app.use(express.json()); // អនុញ្ញាតឱ្យ Backend អានទិន្នន័យ JSON (req.body)
 
-// Connect DB
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("Connected to MongoDB!"))
-  .catch(err => console.error(err));
+// ៤. កំណត់ផ្លូវ (Routes)
+app.use('/api/users', userRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/orders', orderRoutes);
 
-// Routes - ហៅពី Folder routes មកប្រើ
-app.use('/api/v1/products', require('./routes/productRoutes'));
-app.use('/api/v1/posts', require('./routes/postRoutes'));
-// app.use('/api/v1/orders', require('./routes/orderRoutes')); // បើកពេលសរសេររួច
+app.use('/api/upload', require('./routes/uploadRoutes'));
 
-const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// ធ្វើឱ្យ Folder uploads អាចមើលឃើញជាសាធារណៈ (Static)
+app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
+// ផ្លូវសម្រាប់តេស្ត Server
+app.get('/', (req, res) => {
+    res.send('API កំពុងដំណើរការ...');
+});
+
+// ៥. បើក Server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+    console.log(`Server កំពុងដើរលើ Port ${PORT}`);
+});
