@@ -1,15 +1,23 @@
 const express = require('express');
 const router = express.Router();
-// ប្តូរការតម្លើងបែបនេះវិញ ដើម្បីឱ្យដឹងថាឈ្មោះណាខ្លះដែលត្រូវបាន Import មក
-const { getAllProducts, createProduct, deleteProduct } = require('../controllers/productController');
 
-// មើលទំនិញទាំងអស់
-router.get('/', getAllProducts); 
+const {
+  getProducts,
+  getProductById,
+  createProduct,
+  deleteProduct
+} = require('../controllers/productController');
 
-// បន្ថែមទំនិញថ្មី
+// GET all products
+router.get('/', getProducts);
+
+// GET single product
+router.get('/:id', getProductById);
+
+// CREATE product
 router.post('/', createProduct);
 
-// លុបទំនិញ
+// DELETE product
 router.delete('/:id', deleteProduct);
 
 module.exports = router;
